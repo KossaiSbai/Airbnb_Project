@@ -11,6 +11,7 @@ import javax.swing.border.Border;
  */
 public class WelcomeWindow extends Windows {
     private String[] fromPrices, toPrices;
+    public static int upperPrice, lowerPrice;
 
 
     /**
@@ -48,9 +49,9 @@ public class WelcomeWindow extends Windows {
         next.setEnabled(false);
         JButton search = new JButton("Search");
         centerPanel.add(search);
-        search.addActionListener(e_ -> displayImage());
-        from.addActionListener(e -> validRange(from, to, previous, next));
-        to.addActionListener(e_ -> validRange(from, to, previous, next));
+        search.addActionListener(e_ -> displayImage() );
+        from.addActionListener(e -> {validRange(from, to, previous, next);lowerPrice = Integer.parseInt(from.getSelectedItem().toString()); });
+        to.addActionListener(e_ -> {validRange(from, to, previous, next); upperPrice = Integer.parseInt(to.getSelectedItem().toString()); });
         fromPanel.add(new JLabel("From : "));
         fromPanel.add(from);
         toPanel.add(new JLabel("To : "));
