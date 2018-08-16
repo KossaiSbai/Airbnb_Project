@@ -46,17 +46,17 @@ public class MapWindow extends Windows {
 
         for (String borough : BOROUGHS) {
             int numberOfProperties = numberOfProperties(borough, fromPrice, toPrice);
-            int width;
-            int height;
-            String url;
+            int width = 0;
+            int height = 0;
+            String url = "";
 
-            if (numberOfProperties < 500) {
+            if (numberOfProperties < 500 && numberOfProperties > 0) {
                 width = height = 20;
                 url = "houseicon3.png";
             } else if (numberOfProperties >= 500 && numberOfProperties < 3000) {
                 width = height = 30;
                 url = "houseicon2.png";
-            } else {
+            } else if(numberOfProperties >= 3000){
                 width = height = 50;
                 url = "houseicon.png";
             }
