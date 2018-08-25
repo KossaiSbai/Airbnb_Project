@@ -4,6 +4,8 @@ import java.awt.*;
 public class GUI {
     public static WelcomeWindow ww ;
     public static JFrame mainFrame;
+    public static MapWindow mw;
+    public static StatisticsWindow sw;
     public GUI()
     {
         makeGUI();
@@ -12,6 +14,7 @@ public class GUI {
     public static void main(String[] args)
     {
         GUI gui = new GUI();
+        StatisticsWindow s = new StatisticsWindow();
     }
 
     public void makeGUI()

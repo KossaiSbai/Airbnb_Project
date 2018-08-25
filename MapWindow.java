@@ -1,5 +1,6 @@
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.*;
 import javax.imageio.*;
 import java.io.*;
@@ -12,6 +13,7 @@ public class MapWindow extends Windows {
     JPanel mapPanel;
     JLabel mapLabel;
     HashMap<String, ArrayList<Integer>> boroughsCoordinates;
+    JButton statisticsButton,previousButton;
 
     public MapWindow() {
         boroughsCoordinates = new HashMap<>();
@@ -21,16 +23,27 @@ public class MapWindow extends Windows {
     public void displayMap()
 
     {
-        JPanel mapPanel = new JPanel();
-        this.mapPanel = mapPanel;
+        setLayout(new BorderLayout());
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+         mapPanel = new JPanel();
+
         try {
             BufferedImage bimg = ImageIO.read(new File("london-borough-map.jpg"));
             ImageIcon image = new ImageIcon();
             image.setImage(bimg);
-            JLabel imageLabel = new JLabel(image);
-            mapLabel = imageLabel;
+            mapLabel = new JLabel(image);
             mapPanel.add(mapLabel);
-            add(mapPanel);
+            mapPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.black));
+            bottomPanel.setBorder(BorderFactory.createMatteBorder(1,0,0,0,Color.black));
+            add(mapPanel,BorderLayout.CENTER);
+            add(bottomPanel,BorderLayout.SOUTH);
+            statisticsButton = new JButton("Statistics");
+            previousButton = new JButton("Previous");
+            previousButton.addActionListener(e-> goBackToWelcome());
+            statisticsButton.addActionListener(e-> goToStatistics());
+            bottomPanel.add(statisticsButton, BorderLayout.EAST);
+            bottomPanel.add(previousButton,BorderLayout.WEST);
+
         } catch (IOException exc) {
             return;
         }
@@ -120,12 +133,30 @@ public class MapWindow extends Windows {
         boroughsCoordinates.put(BOROUGHS[26], new ArrayList(Arrays.asList(414, 337)));
         boroughsCoordinates.put(BOROUGHS[27], new ArrayList(Arrays.asList(472, 323)));
         boroughsCoordinates.put(BOROUGHS[28], new ArrayList(Arrays.asList(612, 380)));
-        boroughsCoordinates.put(BOROUGHS[29], new ArrayList(Arrays.asList(0, 0)));
-        boroughsCoordinates.put(BOROUGHS[30], new ArrayList(Arrays.asList(0, 0)));
-        boroughsCoordinates.put(BOROUGHS[31], new ArrayList(Arrays.asList(0, 0)));
-        boroughsCoordinates.put(BOROUGHS[32], new ArrayList(Arrays.asList(0, 0)));
+        boroughsCoordinates.put(BOROUGHS[29], new ArrayList(Arrays.asList(100, 100)));
+        boroughsCoordinates.put(BOROUGHS[30], new ArrayList(Arrays.asList(100, 100)));
+        boroughsCoordinates.put(BOROUGHS[31], new ArrayList(Arrays.asList(100, 100)));
+        boroughsCoordinates.put(BOROUGHS[32], new ArrayList(Arrays.asList(100, 100)));
 
 
+    }
+
+    public void goBackToWelcome()
+    {
+        GUI.mainFrame.remove(GUI.mw);
+        GUI.mainFrame.add(GUI.ww);
+        GUI.mainFrame.revalidate();
+        GUI.mainFrame.repaint();
+    }
+
+    public void goToStatistics()
+    {
+        StatisticsWindow s = new StatisticsWindow();
+        GUI.sw = s;
+        GUI.mainFrame.remove(GUI.mw);
+        GUI.mainFrame.add(GUI.sw);
+        GUI.mainFrame.revalidate();
+        GUI.mainFrame.repaint();
     }
 }
 

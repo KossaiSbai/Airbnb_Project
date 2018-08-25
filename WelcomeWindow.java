@@ -96,8 +96,9 @@ public class WelcomeWindow extends Windows {
 
     public void displayImage() {
         MapWindow m = new MapWindow();
+        GUI.mw = m;
         GUI.mainFrame.remove(GUI.ww);
-        GUI.mainFrame.add(m);
+        GUI.mainFrame.add(GUI.mw);
         GUI.mainFrame.revalidate();
         GUI.mainFrame.repaint();
 
