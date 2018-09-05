@@ -151,13 +151,14 @@ public class MapWindow extends Windows {
 
     public void goToStatistics()
     {
-        StatisticsWindow s = new StatisticsWindow();
-        GUI.sw = s;
+        GUI.sw = new StatisticsWindow();
         GUI.mainFrame.remove(GUI.mw);
         GUI.mainFrame.add(GUI.sw);
         GUI.mainFrame.revalidate();
         GUI.mainFrame.repaint();
+
     }
 }
+
 
 
