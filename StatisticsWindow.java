@@ -1,69 +1,76 @@
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 
+/* This class stands for the last window of the application.
+   Each instance of that class displays general statistics computed from the database.
+   The user can scroll through those statistics.
+ */
+
 public class StatisticsWindow extends Windows {
 
-    ArrayList<String> statistics ;
-    JPanel statisticsPanel;
-    int currentStat;
-    JLabel stat;
+   private ArrayList<String> statistics;
+   private int currentStat;
+   private JLabel stat;
+
     public StatisticsWindow()
     {
         buildStatistics();
         currentStat = 0;
         makeStatisticsFrame();
 
-
     }
 
-    public int averageNumberOfReviewsPerProperty()
+    // Returns the average number of reviews per property.
+    private int averageNumberOfReviewsPerProperty()
     {
-        int total = 0;
+        int totalNumberOfReviews = 0;
 
         for(AirbnbListing property : database)
         {
-            total+=property.getNumberOfReviews();
+            totalNumberOfReviews+=property.getNumberOfReviews();
         }
-        return total/database.size();
+        return totalNumberOfReviews/database.size();
     }
 
-    public int numberOfAvailableProperties()
+    // Returns the total number of properties that are available for at least one day in the year.
+    private int numberOfAvailableProperties()
     {
-        int total =0;
+        int totalNumberOfAvailableProperties =0;
         for(AirbnbListing property  : database)
         {
             if(property.getAvailability365()>0) {
-                total ++;
+                totalNumberOfAvailableProperties ++;
 
             }
         }
-        return total;
+        return totalNumberOfAvailableProperties;
     }
 
-    public int numberOfEntireHApts()
+    // Returns the total number of entire home/apartments.
+    private int numberOfEntireHomeApts()
     {
-        int total=0;
+        int numberOfEntireHomeApts=0;
         for(AirbnbListing property: database)
         {
             if(property.getRoom_type().equals("Entire home/apt"))
             {
-                total+=1;
+                numberOfEntireHomeApts++;
             }
         }
-        return total;
+        return   numberOfEntireHomeApts;
     }
 
-    public String getPriciestNeighborhood() // neighborhood with the most expensive property.
+    // Returns the neighborhood with the most expensive property.
+    private String getPriciestNeighborhood()
     {
         int maxPrice =0;
         String neighborhood = "";
         for(AirbnbListing property : database)
         {
-            int price = property.getPrice() * property.getMinimumNights();
+            int price = property.getPrice() * property.getMinimumNights(); // we assume that the customer stays the minimum number of nights into the property.
 
             if(price>maxPrice)
             {
@@ -74,7 +81,8 @@ public class StatisticsWindow extends Windows {
         return neighborhood;
     }
 
-    public int countProperties(String borough)
+    // Counts the number of properties for a given borough. Used in getMostPopulatedNeighborhood() method.
+    private int countProperties(String borough)
     {
         int count =0;
         for(AirbnbListing p : database)
@@ -88,55 +96,138 @@ public class StatisticsWindow extends Windows {
         return count;
     }
 
-
-    public String getMostPopulatedNeighborhood()
+    // Returns the neighborhood with the most properties.
+    private String getMostPopulatedNeighborhood()
     {
-        int max =0;
+        int maxNumberOfProperties =0;
         String mostPopulatedNeighborhood ="";
         for (String n : BOROUGHS)
         {
-           if(countProperties(n)> max)
+           if(countProperties(n)> maxNumberOfProperties)
            {
-               max = countProperties(n);
+               maxNumberOfProperties = countProperties(n);
                mostPopulatedNeighborhood = n;
            }
         }
         return mostPopulatedNeighborhood;
     }
 
+    // Returns the most common room type.
+    private String mostCommonRoomType()
+    {
+        /* We go through the database and find all the room types.
+         Each time there is a property having a room type , the counter associated to that room type increments. */
+        HashMap<String,Integer> roomTypes = new HashMap<>();
+        String mostCommonNeighborhood = "";
+        for(AirbnbListing p : database)
+        {
+            String rt = p.getRoom_type();
+            if(!roomTypes.keySet().contains(rt))
+
+            {
+               roomTypes.put(rt,0);
+            }
+            else
+            {
+                int count = roomTypes.get(rt);
+                roomTypes.put(rt,++count);
+            }
+        }
+        int maxNumberOfProperties =0;
+
+        // We go through the keys of the hashmap and find the room type associated to the biggest count.
+        for(String key: roomTypes.keySet())
+        {
+            if(roomTypes.get(key) > maxNumberOfProperties)
+            {
+                maxNumberOfProperties = roomTypes.get(key);
+                mostCommonNeighborhood = key;
+            }
+        }
+        return mostCommonNeighborhood;
+
+    }
+
+    // Returns the average price per night.
+    private int averagePricePerNight()
+    {
+        int total =0;
+        for(AirbnbListing p : database)
+        {
+           total+=p.getPrice();
+        }
+        return total/database.size();
+    }
+
+    // Returns then id and name of the host with the most properties.
+    private String hostWithMostProperties()
+    {
+        int max =0;
+        String host = "";
+        for(AirbnbListing p : database)
+        {
+            String hostID = p.getHost_id();
+            String hostName = p.getHost_name();
+            if(p.getCalculatedHostListingsCount() > max)
+            {
+                max = p.getCalculatedHostListingsCount();
+                host = "ID: " + hostID + "  " + "Name : " + hostName;
+
+            }
+
+        }
+        return host;
+    }
 
 
-    public void buildStatistics()
+    // Stores all the statistics to a list in order to be displayed on the window.
+    private void buildStatistics()
     {
         statistics = new ArrayList<>();
         statistics.add( "Average number of reviews per property: "+  Integer.toString(averageNumberOfReviewsPerProperty()));
         statistics.add("Total number of available properties: " + Integer.toString(numberOfAvailableProperties()));
-        statistics.add("Number of entire apartments: " + Integer.toString(numberOfEntireHApts()));
+        statistics.add("Number of entire apartments: " + Integer.toString(numberOfEntireHomeApts()));
         statistics.add("Priciest neighborhood : " + getPriciestNeighborhood());
         statistics.add("Neighborhood with the most properties : " + getMostPopulatedNeighborhood());
+        statistics.add("Most common room type : " + mostCommonRoomType());
+        statistics.add("Average price per night : " + averagePricePerNight());
+        statistics.add("Host with the most properties : " + hostWithMostProperties());
 
 
     }
 
-
-    public void makeStatisticsFrame()
+    // Builds the statistics window.
+    private void makeStatisticsFrame()
     {
         setLayout(new BorderLayout());
-        setBackground(Color.WHITE);
-         statisticsPanel = new JPanel(new GridBagLayout());
+
+        // Initialises all the components.
+        JButton previousStat = new JButton("<");
+        previousStat.addActionListener(e-> getPreviousStat());
+        JButton nextStat = new JButton(">");
+        nextStat.addActionListener(e-> goToNextStat());
+        stat = new JLabel(statistics.get(currentStat)); // current stat displayed on the window. Initialised to the first statistic of the list.
+        stat.setFont(new Font("Calibri", Font.BOLD, 30));
+
+
+        // Initialises all the panels.
+        JPanel statisticsPanel = new JPanel(new GridBagLayout());
         JPanel bottomPanel = new JPanel();
         JPanel previousPanel = new JPanel(new BorderLayout());
         JPanel nextPanel = new JPanel(new BorderLayout());
         JButton mapPanel = new JButton("Map");
         mapPanel.addActionListener(e-> goBackToMapPanel());
-        JButton previousStat = new JButton("<");
-        previousStat.addActionListener(e-> getPreviousStat());
-        JButton nextStat = new JButton(">");
-        nextStat.addActionListener(e-> goToNextStat());
         previousPanel.add(previousStat,BorderLayout.CENTER);
         nextPanel.add(nextStat,BorderLayout.CENTER);
-        stat = new JLabel(statistics.get(currentStat));
-        stat.setFont(new Font("Calibri", Font.BOLD, 30));
+
+
+        // Sets the color of the background of the panels.
+        statisticsPanel.setBackground(Color.WHITE);
+        bottomPanel.setBackground(Color.WHITE);
+        previousPanel.setBackground(Color.WHITE);
+        nextPanel.setBackground(Color.WHITE);
+
+        // Adds the components to the panels and the panels to the window.
         statisticsPanel.add(stat);
         bottomPanel.add(mapPanel, BorderLayout.WEST);
         add(statisticsPanel,BorderLayout.CENTER);
@@ -144,20 +235,20 @@ public class StatisticsWindow extends Windows {
         add(previousPanel,BorderLayout.WEST);
         add(nextPanel,BorderLayout.EAST);
         add(bottomPanel,BorderLayout.SOUTH);
-        statisticsPanel.setBackground(Color.WHITE);
-        bottomPanel.setBackground(Color.WHITE);
+
 
     }
 
-    public void goToNextStat()
+    // Displays the following stat on the screen.
+    private void goToNextStat()
     {
 
        stat.setText(statistics.get(++currentStat % statistics.size()));
 
-
     }
 
-    public void getPreviousStat()
+    // Displays the preceding stat on the screen.
+    private void getPreviousStat()
     {
         --currentStat;
         if(currentStat < 0)
@@ -167,7 +258,8 @@ public class StatisticsWindow extends Windows {
         stat.setText(statistics.get(currentStat));
     }
 
-    public void goBackToMapPanel()
+    // Goes back to the map panel.
+    private void goBackToMapPanel()
     {
         GUI.mainFrame.remove(GUI.sw);
         GUI.mainFrame.add(GUI.mw);

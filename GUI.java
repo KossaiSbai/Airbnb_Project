@@ -20,7 +20,7 @@ public class GUI {
         GUI gui = new GUI();
     }
 
-    //
+    // Creates the main window and adds the initial window , account window , into it.
     private void makeGUI()
     {
         mainFrame = new JFrame();

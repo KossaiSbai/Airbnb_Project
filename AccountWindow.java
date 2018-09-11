@@ -2,6 +2,8 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 
 /*
 This class stands for the first window that the user sees when launching the application. In this window the user has to create an account and then log in to the system with that account in order to be able to use the application.
@@ -15,8 +17,9 @@ private HashMap<String,String> credentials; //  Hash Map that maps a username to
 private int tries; // number of times the user can try to log in.
 private JTextField CAUsernameField,LIUsernameField; // the text fields of the "Create account" section in which the user an input a username and a password.
 private JPasswordField CAPasswordField,LIPasswordField; // the text fields of the "Log in" section in which the user an input a username and a password.
-private JButton logOut,logIn;
-private JPanel northPanel;
+private JButton logOut,logIn,welcome; // the buttons to log in and log out.
+private JPanel northPanel; // the panel holding the createAccount , logIn and logOut buttons.
+private JLabel usernameLabel; // a JLabel containing the username of the account on which the user is currently logged in.
 
     public AccountWindow() {
         credentials = new HashMap<>();
@@ -30,11 +33,17 @@ private JPanel northPanel;
     {
         // Creates all the panels and sets their layouts.
         setLayout(new BorderLayout());
-        JPanel bottomPanel = new JPanel();
+        JPanel bottomPanel = new JPanel(new BorderLayout());
         northPanel = new JPanel(new GridLayout(1,3));
         JPanel centerPanel = new JPanel(new GridLayout(1,0));
         JPanel leftPanel = new JPanel(new GridLayout(0,1));
         JPanel rightPanel = new JPanel(new GridLayout(0,1));
+
+        // Sets the color of the background of the panels.
+        leftPanel.setBackground(Color.WHITE);
+        rightPanel.setBackground(Color.WHITE);
+        bottomPanel.setBackground(Color.WHITE);
+        northPanel.setBackground(Color.WHITE);
 
         // Sets the size of the panels.
         leftPanel.setPreferredSize(new Dimension(300,300));
@@ -53,12 +62,14 @@ private JPanel northPanel;
         JButton createAccount = new JButton("Create an account");
         logIn = new JButton("Log in");
         logOut = new JButton("Log out");
+        welcome = new JButton("Welcome"); // This button enables the user to go to the welcome window at any point after having logged in with an account. This button is enabled while the user is logged in with an account.
+        welcome.setEnabled(false);
+        welcome.addActionListener(e-> goToWelcomeScreen());
         createAccount.addActionListener(e-> createNewAccount(CAUsernameField.getText(),CAPasswordField.getPassword()));
         logIn.addActionListener(e-> logIn(LIUsernameField.getText(),LIPasswordField.getPassword(),logIn));
         logOut.addActionListener(e-> logOut());
 
         // Adds the components to the panels. The left and right panels are both subpanels of the central panel.
-
 
         // The left panel stands for the "Create account " section.
         leftPanel.add(new JLabel("   Don't have any account ? Create one here "));
@@ -83,6 +94,10 @@ private JPanel northPanel;
         northPanel.add(createAccount);
         northPanel.add(new JLabel(""));
         northPanel.add(logIn);
+        usernameLabel = new JLabel();
+        bottomPanel.add(usernameLabel,BorderLayout.WEST);
+        bottomPanel.add(welcome,BorderLayout.EAST);
+
 
 
         // Sets the borders between the panels.
@@ -99,12 +114,12 @@ private JPanel northPanel;
     }
 
     /* Allows the user to go to the welcome screen.
-       Is executed when the next button is pressed. */
+       Is executed when the welcome button is pressed. */
 
     private void goToWelcomeScreen()
     {
 
-        GUI.ww = new WelcomeWindow(); // The welcome window that was just created in the line above is assigned to the welcome window field of the GUI class, which is the welcome window that the user will see all along.
+        GUI.ww = new WelcomeWindow(); // The generated welcome window is assigned to the welcome window field of the GUI class, which is the welcome window that the user will see all along.
         GUI.mainFrame.remove(GUI.aw);
         GUI.mainFrame.add(GUI.ww);
         GUI.mainFrame.setPreferredSize(new Dimension(1200,1000));
@@ -127,6 +142,7 @@ private JPanel northPanel;
      }
 
 
+     // the user has put that a password that doesn't meet all the requirements
      else
      {
          JOptionPane.showMessageDialog(GUI.mainFrame, "Please make sure that :" + "\n" +
@@ -135,7 +151,7 @@ private JPanel northPanel;
                  + "- the password contains at least 1 lowercase character" + "\n"
                  + "- the password contains at least 1 digit (number between 1 and 9)" + "\n"
                  + "- the username is not empty",
-                 "Warning", JOptionPane.WARNING_MESSAGE);
+                 "Airbnb", JOptionPane.WARNING_MESSAGE);
      }
 
 
@@ -150,31 +166,35 @@ private JPanel northPanel;
         {
             JOptionPane.showMessageDialog(GUI.mainFrame, "There was a problem :" + "\n" +
                             "Either your username or your password is blank",
-                    "Warning", JOptionPane.WARNING_MESSAGE);
+                    "Airbnb", JOptionPane.WARNING_MESSAGE);
             tries++;
         }
 
         else if (checkValidityCredentials(username, password))  // checks if the user's username and password are correct and match.
         {
             JOptionPane.showMessageDialog(GUI.mainFrame, "You successfully logged in",
-                    "Warning", JOptionPane.INFORMATION_MESSAGE);
+                    "Airbnb", JOptionPane.INFORMATION_MESSAGE);
 
             exchangeButtons(logIn,logOut);
             LIUsernameField.setText("");
             LIPasswordField.setText("");
+            usernameLabel.setText("Logged in as : " + username);
+            welcome.setEnabled(true);
             goToWelcomeScreen();
+
         }
 
         else {
             JOptionPane.showMessageDialog(GUI.mainFrame, "There was a problem :" + "\n" +
                             "We couldn't find an account with that username or your password is incorrect",
-                    "Warning", JOptionPane.WARNING_MESSAGE);
+                    "Airbnb", JOptionPane.WARNING_MESSAGE);
             tries++;
 
         }
 
-        if (tries == 5) // If the number of tries equals the limit , then the ser cannot log in for 2 minutes.
+        if (tries == 5) // If the number of tries equals the limit , then the user cannot log in for 2 minutes.
         {
+            JOptionPane.showMessageDialog(GUI.mainFrame,"You have exceeded the number of tries to log in. From now , you will be unable to log in for 2 minutes. ", "Airbnb",JOptionPane.WARNING_MESSAGE );
             button.setEnabled(false);
             Timer timer = new Timer(120000, e -> {
                 tries = 0;
@@ -206,11 +226,16 @@ private JPanel northPanel;
 
     }
 
+    // Logs out the user of the system.
     private void logOut()
     {
        exchangeButtons(logOut,logIn);
+       usernameLabel.setText("");
+       welcome.setEnabled(false);
     }
 
+
+    // Removes one button and replaces it by another one. This function is used in this class to display or not the log in and log out buttons when the user logs in and logs out.
     private void exchangeButtons(JButton button1, JButton button2)
     {
         northPanel.remove(button1);
