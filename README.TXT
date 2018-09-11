@@ -1,6 +1,1 @@
-PROJECT TITLE: AirBnB London Data Set Loader
-PURPOSE OF PROJECT: To load the AirBnB London data set from the provided csv file into a Java data structure
-VERSION or DATE: 1.0
-HOW TO START THIS PROJECT: Use the method 'load' in the the class 'AirbnbDataLoader'
-AUTHORS: KCL Informatics, PPA 17-18
-USER INSTRUCTIONS: -
+This project originates from the assignment 4 of PPA 2017/2018 programming module taught by Dr Kolling. The main goal of the assignment was to make us work with GUI in Java and be able to handle an API , here a database as a csv file , containing data about London properties of Airbnb. First of all , I carried out this project because  I wanted to make my own version of this assignment to fully code my own vision of how the application should look like and behave. I also wanted to strengthen my experience of programming in Java. Basically, this application is built as a multi-window app where the user chooses a price range and is shown with the properties matching that price range all across London. He has to create an account and log in with it to use the app. Finally in one of the windows , the user is also provided with a list of statisitics computed from the database. 
