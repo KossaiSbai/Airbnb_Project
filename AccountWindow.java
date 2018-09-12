@@ -2,8 +2,6 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 
 /*
 This class stands for the first window that the user sees when launching the application. In this window the user has to create an account and then log in to the system with that account in order to be able to use the application.
