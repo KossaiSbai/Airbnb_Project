@@ -251,6 +251,7 @@ public class StatisticsWindow extends Windows {
     private void getPreviousStat()
     {
         --currentStat;
+       currentStat%=statistics.size();
         if(currentStat < 0)
         {
             currentStat = statistics.size()-1;
